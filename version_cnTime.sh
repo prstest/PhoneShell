@@ -36,16 +36,17 @@ echo "处理器：$(cat /proc/cpuinfo | grep -m1 "Hardware" | cut -d':' -f2 | se
 echo "ZRAM大小："$(awk 'NR > 1 {size=$3/(1024*1024); printf "%.1fG\n", size}' /proc/swaps)
 package_name1="me.weishu.kernelsu"
 package_name2="cn.myflv.noactive"
-if pm list packages | grep -q "$package_name1"; then
+if pm list packages | grep -qw "$package_name1"; 
+then
     echo "Root环境：KernelSU"
 else
     echo "应用未安装"
 fi
 echo "你拥有的Root模块"
-find /data/adb/modules/ -name 'module.prop' -exec grep -H '^name=' {} + | awk -F= '{print "😋",$2}'
+find /data/adb/modules/ -name 'module.prop' -exec awk -F= '/^name=/ {name=$2} /^version=/ {print "😋", name, "" $2 ""}' {} +
 echo " "
 
-#查看电池
+#查看电池 传播者：Rock&Z
 charge_full=`su -c cat /sys/class/power_supply/battery/charge_full`
 charge_full_design=`su -c cat /sys/class/power_supply/battery/charge_full_design`
 cycle_count=`su -c cat /sys/class/power_supply/battery/cycle_count`
@@ -56,12 +57,19 @@ JKD=$(echo "100*$charge_full/$charge_full_design"|bc)
 echo "当前电池健康度：$JKD%"
 echo " "
 
-# 查看冻结源码
+# 查看冻结源码 作者：JARK006
 vers=$(head -n 1 /data/system/NoActive/log | awk '{print $NF}')
-if pm list packages | grep -q "$package_name2"; then
+if pm list packages | grep -qw "$package_name2"; then
     echo "墓碑环境：Noactive($vers)"
 else
     echo "没有墓碑"
+fi
+if [ -e /sys/fs/cgroup/uid_0/cgroup.freeze ]; then
+    echo "✔️已挂载 FreezerV2(UID)"
+fi
+
+if [[ -e /sys/fs/cgroup/frozen/cgroup.freeze ]] && [[ -e /sys/fs/cgroup/unfrozen/cgroup.freeze ]]; then
+    echo "✔️已挂载 FreezerV2(FROZEN)"
 fi
 if [ -e /sys/fs/cgroup/freezer/perf/frozen/freezer.state ]; then
     echo "✔️已挂载 FreezerV1(FROZEN)"
@@ -73,9 +81,9 @@ fi
 
 status=$(ps -A | grep -E "refrigerator|do_freezer|signal" | awk '{print $6 " " $9}')
 status=${status//"__refrigerator"/"😴 FreezerV1冻结中:"}
-status=${status//"do_freezer_trap"/"🥶 FreezerV2冻结中:"}
-status=${status//"do_signal_stop"/"ߧ꓉GSTOP冻结中:"}
-status=${status//"get_signal"/"❄️可能是FreezerV2冻结中:"}
+status=${status//"do_freezer_trap"/"😴 FreezerV2冻结中:"}
+status=${status//"do_signal_stop"/"😴꓉GSTOP冻结中:"}
+status=${status//"get_signal"/"😴 可能是FreezerV2冻结中:"}
 
 if [ ${#status} -gt 2 ]; then
 echo "==============[ 冻结状态 ]==============
