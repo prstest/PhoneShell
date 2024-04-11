@@ -11,8 +11,6 @@ package_name2="cn.myflv.noactive"
 if pm list packages | grep -qw "$package_name1"; 
 then
     echo "Root环境：KernelSU"
-else
-    echo "应用未安装"
 fi
 echo "你拥有的Root模块"
 find /data/adb/modules/ -name 'module.prop' -exec awk -F= '/^name=/ {name=$2} /^version=/ {print "😋", name, "" $2 ""}' {} +
@@ -33,8 +31,6 @@ echo " "
 vers=$(head -n 1 /data/system/NoActive/log | awk '{print $NF}')
 if pm list packages | grep -qw "$package_name2"; then
     echo "墓碑环境：Noactive($vers)"
-else
-    echo "没有墓碑"
 fi
 if [ -e /sys/fs/cgroup/uid_0/cgroup.freeze ]; then
     echo "✔️已挂载 FreezerV2(UID)"
