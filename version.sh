@@ -53,9 +53,9 @@ fi
 
 status=$(ps -A | grep -E "refrigerator|do_freezer|signal" | awk '{print $6 " " $9}')
 status=${status//"__refrigerator"/"😴 FreezerV1冻结中:"}
-status=${status//"do_freezer_trap"/"🥶 FreezerV2冻结中:"}
-status=${status//"do_signal_stop"/"ߧ꓉GSTOP冻结中:"}
-status=${status//"get_signal"/"❄️可能是FreezerV2冻结中:"}
+status=${status//"do_freezer_trap"/"😴 FreezerV2冻结中:"}
+status=${status//"do_signal_stop"/"😴꓉GSTOP冻结中:"}
+status=${status//"get_signal"/"😴 可能是FreezerV2冻结中:"}
 
 if [ ${#status} -gt 2 ]; then
 echo "==============[ 冻结状态 ]==============
