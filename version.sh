@@ -15,8 +15,6 @@ else
     echo "应用未安装"
 fi
 echo "你拥有的Root模块"
-#ls -d -1 /data/adb/modules/* | xargs -n 1 basename | while read folder; do printf "😋 $folder\n"; done
-#find /data/adb/modules/ -name 'module.prop' -exec grep -H '^name=' {} + | awk -F= '{print "😋",$2}'
 find /data/adb/modules/ -name 'module.prop' -exec awk -F= '/^name=/ {name=$2} /^version=/ {print "😋", name, "" $2 ""}' {} +
 echo " "
 
@@ -37,6 +35,13 @@ if pm list packages | grep -qw "$package_name2"; then
     echo "墓碑环境：Noactive($vers)"
 else
     echo "没有墓碑"
+fi
+if [ -e /sys/fs/cgroup/uid_0/cgroup.freeze ]; then
+    echo "✔️已挂载 FreezerV2(UID)"
+fi
+
+if [[ -e /sys/fs/cgroup/frozen/cgroup.freeze ]] && [[ -e /sys/fs/cgroup/unfrozen/cgroup.freeze ]]; then
+    echo "✔️已挂载 FreezerV2(FROZEN)"
 fi
 if [ -e /sys/fs/cgroup/freezer/perf/frozen/freezer.state ]; then
     echo "✔️已挂载 FreezerV1(FROZEN)"
