@@ -1,8 +1,12 @@
 #查看内核
-echo "手机型号：$(getprop ro.product.model)"
+echo "手机型号：$(getprop ro.product.bootimage.model)"
+echo "安卓版本：$(getprop ro.build.version.release)"
+echo "安全补丁：$(getprop ro.build.version.security_patch)"
 echo "内核版本：$(uname -r)"
 echo "内核架构：$(uname -s) $(uname -m)"
 echo "内核信息：$(cat /proc/version | cut -d'(' -f3 | cut -d')' -f1)"
+echo "处理器：$(cat /proc/cpuinfo | grep -m1 "Hardware" | cut -d':' -f2 | sed 's/^[ \t]*//')"
+echo "ZRAM大小："$(awk 'NR > 1 {size=$3/(1024*1024); printf "%.1fG\n", size}' /proc/swaps)
 compile_time=$(uname -v)
 datetime_part=$(echo "$compile_time" | awk '{print $6, $7, $8, $9, $10}')
 case $(echo "$compile_time" | awk '{print $5}') in

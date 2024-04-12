@@ -1,5 +1,7 @@
 #查看内核
-echo "手机型号：$(getprop ro.product.model)"
+echo "手机型号：$(getprop ro.product.bootimage.model)"
+echo "安卓版本：$(getprop ro.build.version.release)"
+echo "安全补丁：$(getprop ro.build.version.security_patch)"
 echo "内核版本：$(uname -r)"
 echo "内核架构：$(uname -s) $(uname -m)"
 echo "内核信息：$(cat /proc/version | cut -d'(' -f3 | cut -d')' -f1)"
