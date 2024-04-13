@@ -1,4 +1,4 @@
-[English](/Docs/README_English.md) 	[Chinese](README.md)
+[English](/Docs/README_English.md)   |   [Chinese](README.md)
 
 # 这是什么？
 
