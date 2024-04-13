@@ -18,16 +18,16 @@ echo "The root module you have"
 find /data/adb/modules/ -name 'module.prop' -exec awk -F= '/^name=/ {name=$2} /^version=/ {print "😋", name, "" $2 ""}' {} +
 echo " "
 
-# View bettery  
+# View battery  
 # spreader：Rock&Z
 charge_full=`su -c cat /sys/class/power_supply/battery/charge_full`
 charge_full_design=`su -c cat /sys/class/power_supply/battery/charge_full_design`
 cycle_count=`su -c cat /sys/class/power_supply/battery/cycle_count`
-echo "Bettery design capactity：$(echo "scale=0;$charge_full_design/1000"|bc)mAh"
+echo "battery design capactity：$(echo "scale=0;$charge_full_design/1000"|bc)mAh"
 echo "Loop Count：$cycle_count"
-echo "Bettery current full：$(echo "scale=0;$charge_full/1000"|bc)mAh"
+echo "battery current full：$(echo "scale=0;$charge_full/1000"|bc)mAh"
 JKD=$(echo "100*$charge_full/$charge_full_design"|bc)
-echo "Current bettery health degree：$JKD%"
+echo "Current battery health degree：$JKD%"
 echo " "
 
 # View Frozen status 
