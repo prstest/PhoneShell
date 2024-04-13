@@ -1,4 +1,7 @@
+[English](/Docs/README_English.md) 	[Chinese](README.md)
+
 # 这是什么？
+
 一个下午学了一点shell，搓出来的一个查看设备信息Shell脚本。
 
 在编写这段脚本中学到了很多关于Linux和Shell以及ADB的知识。
