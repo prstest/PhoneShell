@@ -1,11 +1,14 @@
 # 这是什么？
-一个下午学了一点shell，搓出来的一个查看设备信息Shell脚本，在编写这段脚本中学到了很多关于Lunix和Shell以及ADB的知识。
+一个下午学了一点shell，搓出来的一个查看设备信息Shell脚本。
+
+在编写这段脚本中学到了很多关于Linux和Shell以及ADB的知识。
+
 # 这几个版本分别代表什么？
-version.sh是最新的版本
+- version.sh是最新的版本
 
-version_cnTime.sh的区别在于编译时间变成了正常的中文显示
+- version_cnTime.sh的区别在于编译时间变成了正常的中文显示
 
-Verison_English 在Version1.2时引入，输出结果为全英文
+- Verison_English.sh在Version1.2时引入，输出结果为全英文
 
 # 实现的方式
 非常没用的写法，无论是检测Root环境还是检测墓碑都是通过包名进行检测，这是一个临时的写法。
