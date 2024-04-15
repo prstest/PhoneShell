@@ -38,9 +38,6 @@ if [ -e /sys/fs/cgroup/uid_0/cgroup.freeze ]; then
     echo "✔️已挂载 FreezerV2(UID)"
 fi
 
-if [[ -e /sys/fs/cgroup/frozen/cgroup.freeze ]] && [[ -e /sys/fs/cgroup/unfrozen/cgroup.freeze ]]; then
-    echo "✔️已挂载 FreezerV2(FROZEN)"
-fi
 if [ -e /sys/fs/cgroup/freezer/perf/frozen/freezer.state ]; then
     echo "✔️已挂载 FreezerV1(FROZEN)"
 fi
@@ -52,8 +49,7 @@ fi
 status=$(ps -A | grep -E "refrigerator|do_freezer|signal" | awk '{print $6 " " $9}')
 status=${status//"__refrigerator"/"😴 FreezerV1冻结中:"}
 status=${status//"do_freezer_trap"/"😴 FreezerV2冻结中:"}
-status=${status//"do_signal_stop"/"😴꓉GSTOP冻结中:"}
-status=${status//"get_signal"/"😴 可能是FreezerV2冻结中:"}
+status=${status//"do_signal_stop"/"😴 GSTOP冻结中:"}
 
 if [ ${#status} -gt 2 ]; then
 echo "==============[ 冻结状态 ]==============
