@@ -7,3 +7,5 @@
 ## FBO Check
 
 感谢The Voyager提供的检测方法
+
+感谢Weverse提供触发条件判断
