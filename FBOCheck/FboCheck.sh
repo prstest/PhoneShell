@@ -41,11 +41,6 @@ if ps -ef | grep -q '[F]boNativeService';then
 else
     echo "FBO进程不存在 ❌"
 fi
- then
-    echo "FBO进程存在并且正在运行 ✔️"
-else
-    echo "FBO进程不存在 ❌"
-fi
 
 echo
 
