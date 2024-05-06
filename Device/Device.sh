@@ -40,7 +40,6 @@ case $(echo "$compile_time" | awk '{print $4}') in
 esac
 time_part=$(echo "$compile_time" | awk '{print $7}')
 echo "编译时间：$(echo "$compile_time" | awk '{print $9}')年$chinese_month$(echo "$compile_time" | awk '{print $6}')日 $chinese_day $time_part"
-echo "内核信息: $(awk -F ' ' '{print $5,$7,$8}' /proc/version | tr -d '()' | tr -d ',')"
 if getprop getprop ro.soc.model >/dev/null 2>&1; then
     echo "处理器：$(getprop ro.soc.model)"
 fi
