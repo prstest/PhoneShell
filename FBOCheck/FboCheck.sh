@@ -36,7 +36,7 @@ else
     echo 请查看目录/system_ext/bin/是否存在FboNativeService
 fi
 
-if ps -ef | grep -q '[F]bo'; then
+if ps -ef | grep -q '[F]boNativeService';then
     echo "FBO进程存在并且正在运行 ✔️"
 else
     echo "FBO进程不存在 ❌"
