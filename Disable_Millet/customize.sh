@@ -1,0 +1,1 @@
+ui_print "你已经成功安装 Disable Millet"
