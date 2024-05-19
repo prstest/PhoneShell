@@ -24,7 +24,7 @@ fi
 additional_info="已关闭Millet，现在由Noactive接管"
 
 # 构建新的描述
-new_description="NoActive版本：$NoactiveVer                                                                     $freezer_info                                                                $additional_info"
+new_description="NoActive版本：$NoactiveVer                                                                             $freezer_info                                                                $additional_info"
 
 # 使用 sed 替换 module.prop 文件中的 description 行
 sed -i "s/^description=.*/description=$new_description/" $MODDIR/module.prop
