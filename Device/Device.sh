@@ -1,5 +1,5 @@
 if getprop ro.product.odm.marketname >/dev/null 2>&1; then
-    echo "手机型号：$(getprop ro.product.odm.marketname) ($(getprop ro.product.board))"
+    echo "手机型号：$(getprop ro.product.marketname) ($(getprop ro.product.board))"
 fi
 if getprop ro.build.version.release >/dev/null 2>&1; then
     echo "安卓版本：$(getprop ro.build.version.release)"
@@ -79,23 +79,25 @@ if pm list packages | grep -qw "io.github.huskydg.magisk"; then
     echo "Root环境：Magisk🦊"
 fi
 
-find /data/adb/modules/ -name 'module.prop' -exec awk -F= '/^name=/ {name=$2} /^version=/ {print " 😋 ", name, "" $2 ""}' {} +
+find /data/adb/modules/ -name 'module.prop' -exec awk -F= '/^name=/ {name=$2} /^version=/ {print " "++i"."" "name, $2}' {} +
 echo " "
 
 # 查看冻结源码 作者：JARK006
 if [ -f "/data/system/NoActive/log" ]; then
     Filever=$(head -n 1 /data/system/NoActive/log | awk '{print $NF}')
-    echo "墓碑环境：Noactive($Filever)"
+    echo "墓碑：Noactive($Filever)"
 fi
 Lspver=$(grep -l "modules" /data/adb/lspd/log/* | xargs sed -n '/当前版本/s/.*当前版本 \([0-9]*\).*/\1/p')
 if [ ! -z "$Lspver" ]; then
-echo "墓碑环境：Noactive($Lspver)"
+echo "墓碑：Noactive($Lspver)"
 fi
 apk=$(dumpsys package com.sidesand.millet | grep versionName | awk -F' ' '{print $1}' | cut -d '=' -f2)
 if pm list packages | grep -qw "com.sidesand.millet1"; then
-    echo "墓碑环境：SMillet($apk)"
+    echo "墓碑：SMillet($apk)"
 fi
-#echo "墓碑环境：Millet😇"
+if [ "$(getprop persist.sys.powmillet.enable)" = "true" ]; then
+echo "墓碑：Millet"
+fi
 if [ -e /sys/fs/cgroup/uid_0/cgroup.freeze ]; then
     echo "✔️已挂载 FreezerV2(UID)"
 fi
@@ -107,15 +109,18 @@ if [ ${#v1Info} -gt 2 ]; then
     echo "$v1Info"
 fi
 
-status=$(ps -A | grep -E "refrigerator|do_freezer|signal" | awk '{print $6 " " $9}')
+status=$(ps -A | grep -E "refrigerator|do_freezer|signal" | awk '{print "😴"$6 " " $9}')
+status1=$(ps -A | grep -E "refrigerator|do_freezer|signal" | grep -v "sand" | grep -v ":"| awk '{print "😴"$6 " " $9}'| grep -v "sh" | grep -c "")
+status2=$(ps -A | grep -E "refrigerator|do_freezer|signal" | awk '{print "😴"$6 " " $9}'|grep -c "")
 status=${status//"__refrigerator"/"😴 FreezerV1冻结中:"}
-status=${status//"do_freezer_trap"/"😴 FreezerV2冻结中:"}
+status=${status//"do_freezer_trap"/" FreezerV2冻结中:"}
 status=${status//"do_signal_stop"/"😴 GSTOP冻结中:"}
 status=${status//"get_signal"/"😴 FreezerV2冻结中:"}
 
 if [ ${#status} -gt 2 ]; then
-echo "==============[ 冻结状态 ]==============
-$status"
+    echo "==============[ 冻结状态 ]==============
+$status
+"[  已冻结"$status1"个应用"$status2"个进程  "]"
 else
     echo "暂无冻结状态的进程"
 fi
