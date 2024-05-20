@@ -1,6 +1,6 @@
 #!/system/bin/sh
 MODDIR=${0%/*}
-
+sleep 5
 # 获取NoActive日志中的最新条目
 NoactiveVer=""
 if [ -f "/data/system/NoActive/log" ]; then
@@ -20,8 +20,10 @@ elif [ -e /sys/fs/cgroup/uid_0/cgroup.freeze ]; then
     freezer_info="冻结方式：FreezerV2(UID)"
 fi
 
-# 添加附加信息
-additional_info="已关闭Millet，现在由Noactive接管"
+additional_info=""
+if [ "$(getprop persist.sys.powmillet.enable)" = "true" ]; then additional_info="Millet处于运行状态，将在下一次重启时关闭"
+else additional_info="已关闭Millet，现在由Noactive接管"
+fi
 
 # 构建新的描述
 new_description="NoActive版本：$NoactiveVer                                                                             $freezer_info                                                                $additional_info"
