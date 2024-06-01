@@ -1,6 +1,6 @@
 #!/system/bin/sh
 MODDIR=${0%/*}
-sleep 5
+sleep 10
 # 获取NoActive日志中的最新条目
 NoactiveVer=""
 if [ -f "/data/system/NoActive/log" ]; then

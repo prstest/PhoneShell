@@ -1,5 +1,3 @@
-#!/system/bin/sh
-MODDIR=${0%/*}
 # 获取NoActive日志中的最新条目
 NoactiveVer=""
 if [ -f "/data/system/NoActive/log" ]; then
