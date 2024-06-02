@@ -15,3 +15,7 @@
 感谢Myflvor的Millet_Config_v2模块
 
 Disable_Millet在Millet_Config_v2的基础上增加了环境判断后写入到模块描述的功能
+
+# Power_status
+
+此脚本用来查看电池掉电的情况，数据来自dumpsys batterystats，数据仅供参考。

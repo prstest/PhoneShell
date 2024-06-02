@@ -18,10 +18,10 @@ SMillet=$(dumpsys package com.sidesand.millet | grep versionName | awk -F' ' '{p
 
 
 # 冻结
+status=$(ps -A | grep -E "refrigerator|do_freezer|signal" | awk '{print "😴"$6 " " $9}')
 process1=$(echo "$status" | grep -v "sand" | grep -v ":" | grep -v "sh" | grep -c "")
 process2=$(echo "$status" | grep -c "")
 
-status=$(ps -A | grep -E "refrigerator|do_freezer|signal" | awk '{print "😴"$6 " " $9}')
 status=${status//"__refrigerator"/"😴 FreezerV1冻结中:"}
 status=${status//"do_freezer_trap"/" FreezerV2冻结中:"}
 status=${status//"do_signal_stop"/"😴 GSTOP冻结中:"}
