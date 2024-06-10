@@ -28,7 +28,7 @@ Disable_Millet在Millet_Config_v2的基础上增加了环境判断后写入到�
 
 # xiaomi_neofetch
 
-**在Device的基础上，增加了ascii art模仿Linux的neofetch写的，用厂商检测如果不是mi系无法显示内容**
+**在Device的基础上，增加了ascii art模仿Linux的neofetch写的，有厂商检测如果不是mi系无法显示内容**
 
 # Noactive inject
 
