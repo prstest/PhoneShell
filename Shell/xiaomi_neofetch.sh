@@ -39,12 +39,15 @@ Lspver=$(grep -l "modules" /data/adb/lspd/log/* | xargs sed -n '/当前版本/s/
 SMillet=$(dumpsys package com.sidesand.millet | grep versionName | awk -F' ' '{print $1}' | cut -d '=' -f2)
 
 # 冻结
-status=$(ps -A | grep -E "refrigerator|do_freezer|signal" | awk '{print "😴"$6 " " $9}')
-process1=$(echo "$status" | grep -v "sand" | grep -v ":" | grep -v "sh" | grep -c "")
+status=$(ps -A | grep -E "refrigerator|do_freezer|signal" | awk '{print "😴"$6 " " $9}' | grep -v Sandboxed | sort -t ' ' -k 1.1)
+process1=$(echo "$status" | grep -v ":" | grep -vw "sh" | grep -c "")
+webwive=$(ps -A | grep -E "refrigerator|do_freezer|signal" | grep Sandboxed | grep -c "")
 process2=$(echo "$status" | grep -c "")
+web=""
 
 status=${status//"__refrigerator"/"😴 FreezerV1冻结中:"}
 status=${status//"do_freezer_trap"/" FreezerV2冻结中:"}
+#webwive=${webwive//"do_freezer_trap"/" FreezerV2冻结中:"}
 status=${status//"do_signal_stop"/"😴 GSTOP冻结中:"}
 status=${status//"get_signal"/" FreezerV2冻结中:"}
 v1Info=$(mount | grep freezer | awk '{print "✔️已挂载 FreezerV1:", $3}')
@@ -184,7 +187,7 @@ tombstone() {
         echo "墓碑：Noactive($Filever)"
     elif [ ! -z "$Lspver" ]; then
         echo "墓碑：Noactive($Lspver)"
-    elif echo "$applist" | grep -qw "com.sidesand.millet"; then
+    elif echo "$applist" | grep -qw "com.sidesand.millet1"; then
         echo "墓碑：SMillet($SMillet)"
     elif [ "$(getprop persist.sys.powmillet.enable)" = "true" ]; then
         echo "墓碑：Millet"
@@ -192,21 +195,25 @@ tombstone() {
         echo "未知的墓碑"
     fi
 
-    if [ -e /sys/fs/cgroup/uid_0/cgroup.freeze ]; then
-        echo "✔️已挂载 FreezerV2(UID)"
-    elif [ -e /sys/fs/cgroup/freezer/perf/frozen/freezer.state ]; then
-        echo "✔️已挂载 FreezerV1(FROZEN)"
-    fi
+    #if [ -e /sys/fs/cgroup/uid_0/cgroup.freeze ]; then
+       # echo "✔️已挂载 FreezerV2(UID)"
+    #elif [ -e /sys/fs/cgroup/freezer/perf/frozen/freezer.state ]; then
+        #echo "✔️已挂载 FreezerV1(FROZEN)"
+    #fi
 
     if [ ${#v1Info} -gt 2 ]; then
         echo "$v1Info"
+    fi
+    
+    if [ webwive != null ];then
+      web="\033[33m[ 注意：WebView已经隐藏 ]\033[0m"
     fi
 
     if [ ${#status} -gt 2 ]; then
         echo "==============[ 冻结状态 ]==============
 $status
-
-"[  已冻结"$process1"个应用"$process2"个进程  "]"
+"[  已冻结"$process1"个应用和"$webwive"个WebView"总共有$process2"个进程被冻结" ]
+$web"
     else
         echo "暂无冻结状态的进程"
     fi
@@ -220,5 +227,3 @@ Battery
 bater
 Root
 tombstone
-
-
