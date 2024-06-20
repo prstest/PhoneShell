@@ -1,11 +1,12 @@
-#!/bin/bash
+commandInject=$(grep '"commandInject":true' /data/system/NoActive/config/MasterConfig.json)
 
+get(){
 # 提示用户输入内容
 setenforce 0
-echo "正在获取包列表..."
+echo "正在获取应用列表..."
 
 # 读取用户输入并存储到变量中
-applist=$(pm list packages -3 | sed -e 's/package://g')
+applist=$(pm list packages $1 | sed -e 's/package://g')
 
 # 设置IFS变量为只包含换行的字符串
 IFS=$'\n'
@@ -101,7 +102,7 @@ do
 done
 
 # 输出结果
-clear
+#clear
 if [ ${#systemApps[@]} -ne 0 ]; then
     echo "系统应用"
     for app in "${systemApps[@]}"; do
@@ -204,3 +205,34 @@ echo "无障碍应用: $isAccessibilityNowCount"
 echo ""
 echo "[数据来自Noactive命令注入后返回的结果,数据仅供参考]"
 setenforce 1
+}
+single(){
+pm freezer query 0#$1
+}
+
+main(){
+echo "1. 全部应用"
+echo "2. 第三方应用"
+echo "3. 单应用查询"
+echo -n "请输入序号："
+read input
+
+if [ "$input" = "1" ]; then
+    get
+elif [ "$input" = "2" ]; then
+    get -3
+elif [ "$input" = "3" ]; then
+    echo -n "请输入包名："
+    read app
+    single $app
+else
+   echo "输入的序号有误，程序已退出"
+   exit
+fi
+}
+# 检查 commandInject 是否为 true
+if [ -n "$commandInject" ]; then
+ main
+else 
+ echo "命令注入未开启"
+fi
