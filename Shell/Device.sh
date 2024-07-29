@@ -12,7 +12,7 @@ JKD=$(echo "100*$charge_full/$charge_full_design" | bc)
 
 # 墓碑
 applist="$(pm list packages -3 2>&1 </dev/null)"
-Filever=$(head -n 1 /data/system/NoActive/log | awk '{print $NF}')
+Filever=$(grep '当前版本' /data/system/NoActive/log | awk '{print $NF}')
 Lspver=$(grep -l "modules" /data/adb/lspd/log/* | xargs sed -n '/当前版本/s/.*当前版本 \([0-9]*\).*/\1/p')
 SMillet=$(dumpsys package com.sidesand.millet | grep versionName | awk -F' ' '{print $1}' | cut -d '=' -f2)
 
