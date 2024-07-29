@@ -79,10 +79,14 @@ Battery() {
 Root() {
     if env | grep -qn 'ksu'; then
         echo "Root环境：KernelSU"
+    elif echo "$applist" | grep -qw "me.bmax.apatch"; then
+        echo "Root环境：APatch"    
+    elif echo "$applist" | grep -qw "com.topjohnwu.magisk"; then
+        echo "Root环境：Magisk"
     elif echo "$applist" | grep -qw "io.github.huskydg.magisk"; then
         echo "Root环境：Magisk🦊"
-    elif echo "$applist" | grep -qw "io.github.huskydg.magisk"; then
-        echo "Root环境：Magisk"
+    elif echo "$applist" | grep -qw "io.github.vvb2060.magisk"; then
+        echo "Root环境：Magisk(Alpha)"
     else
         echo "Root环境：未知"
     fi
@@ -105,9 +109,15 @@ tombstone() {
         echo "未知的墓碑"
     fi
 
+    if [[ -e /sys/fs/cgroup/frozen/cgroup.freeze ]] && [[ -e /sys/fs/cgroup/unfrozen/cgroup.freeze ]]; then
+    echo "✔️已挂载 FreezerV2(FROZEN)"
+    fi
+
     if [ -e /sys/fs/cgroup/uid_0/cgroup.freeze ]; then
         echo "✔️已挂载 FreezerV2(UID)"
-    elif [ -e /sys/fs/cgroup/freezer/perf/frozen/freezer.state ]; then
+    fi
+    
+    if [ -e /sys/fs/cgroup/freezer/perf/frozen/freezer.state ]; then
         echo "✔️已挂载 FreezerV1(FROZEN)"
     fi
 
