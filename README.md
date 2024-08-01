@@ -51,3 +51,17 @@ Disable_Millet在Millet_Config_v2的基础上增加了环境判断后写入到�
 感谢Top大佬的QSC定量停充模块
 
 感谢Cong的ShortX-定量停充
+
+## NoActive Additional
+
+**此模块为墓碑附加模块二改**
+
+修改内容
+
+- 优化模块描述
+- 增加WebUI
+
+感谢Timeline && Myflvor的墓碑附加模块
+
+感谢后宫学长的NoActive-附加模块-改版
+
