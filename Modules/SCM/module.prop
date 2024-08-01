@@ -1,0 +1,6 @@
+id=scm
+name=SCM
+version=v1.0
+versionCode=1
+author=Prs_test
+description=Stop charging when the specified battery level is reached
