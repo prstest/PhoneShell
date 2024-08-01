@@ -25,8 +25,8 @@ if [ "$logtype" = "文件" ]; then
     Filever=$(grep '当前版本' "$logpath" | awk '{print $NF}')
     NoactiveVer="$Filever"
 else
-    lsp_log=$(grep -q "当前版本" "$logpath")
-    NoactiveVer="$Filever"
+    lsp_log=$(grep "当前版本" "$logpath" | awk '{print $NF}' )
+    NoactiveVer="$lsp_log"
 fi
 
 # 获取冻结方式
