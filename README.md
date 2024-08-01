@@ -54,7 +54,7 @@ Disable_Millet在Millet_Config_v2的基础上增加了环境判断后写入到�
 
 # NoActive Additional
 
-**此模块为墓碑附加模块二改**
+**此模块为墓碑附加模块二改，关闭Millet和Hans，为NoAtive提供必要的环境**
 
 修改内容
 
