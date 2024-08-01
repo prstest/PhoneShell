@@ -50,4 +50,4 @@ Disable_Millet在Millet_Config_v2的基础上增加了环境判断后写入到�
 
 感谢Top大佬的QSC定量停充模块
 
-感谢Cong提供的ShortX-定量停充
+感谢Cong的ShortX-定量停充
