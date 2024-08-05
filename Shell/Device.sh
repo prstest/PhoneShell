@@ -22,10 +22,10 @@ status=$(ps -A | grep -E "refrigerator|do_freezer|signal" | awk '{print "😴"$6
 process1=$(echo "$status" | grep -v "sand" | grep -v ":" | grep -v "sh" | grep -c "")
 process2=$(echo "$status" | grep -c "")
 
-status=${status//"__refrigerator"/"😴 FreezerV1冻结中:"}
+status=${status//"__refrigerator"/" FreezerV1冻结中:"}
 status=${status//"do_freezer_trap"/" FreezerV2冻结中:"}
-status=${status//"do_signal_stop"/"😴 GSTOP冻结中:"}
-status=${status//"get_signal"/"😴 FreezerV2冻结中:"}
+status=${status//"do_signal_stop"/" GSTOP冻结中:"}
+status=${status//"get_signal"/" FreezerV2冻结中:"}
 v1Info=$(mount | grep freezer | awk '{print "✔️已挂载 FreezerV1:", $3}')
 
 # 基本信息
@@ -109,12 +109,16 @@ tombstone() {
         echo "未知的墓碑"
     fi
 
-    if [[ -e /sys/fs/cgroup/frozen/cgroup.freeze ]] && [[ -e /sys/fs/cgroup/unfrozen/cgroup.freeze ]]; then
-    echo "✔️已挂载 FreezerV2(FROZEN)"
+    if [ -e /dev/cg2_bpf ]; then
+        echo "✔️已挂载 FreezerV2 (dev/cg2_bpf)"
     fi
 
     if [ -e /sys/fs/cgroup/uid_0/cgroup.freeze ]; then
         echo "✔️已挂载 FreezerV2(UID)"
+    fi
+
+    if [ -e /sys/fs/cgroup/frozen/cgroup.freeze ] && [ -e /sys/fs/cgroup/unfrozen/cgroup.freeze ]; then
+        echo "✔️已挂载 FreezerV2(FROZEN)"
     fi
     
     if [ -e /sys/fs/cgroup/freezer/perf/frozen/freezer.state ]; then
