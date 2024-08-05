@@ -1,3 +1,9 @@
+# 检查是否是 root 用户
+if [ "$(whoami)" != "root" ]; then
+    echo "请使用Root权限运行此脚本"
+    exit 1
+fi
+
 # 设备信息
 compile_time=$(uname -v)
 datetime_part=$(echo "$compile_time" | awk '{print $6, $7, $8, $9, $10}')
