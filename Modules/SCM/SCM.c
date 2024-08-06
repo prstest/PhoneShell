@@ -217,6 +217,7 @@ int main() {
             continue;
         }
         fscanf(current_file, "%d", &current);
+        current = abs(current);
         fclose(current_file);
 
         FILE *level_file = popen("dumpsys battery | grep level | awk '{print $NF}'", "r");
@@ -244,7 +245,7 @@ int main() {
 
         // 停止充电逻辑
         if (Trickle) {
-            if (level == stop && current == stop_current && !was_stopped) {
+            if (level == stop && current <= stop_current && !was_stopped) {
                 fprintf(switch_file, "1");
                 snprintf(log_msg, sizeof(log_msg), "%s [信息] 电量: %d | 电流: %d | 已停止充电", timestamp, level, current);
                 log_and_print(log_msg);
