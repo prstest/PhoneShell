@@ -7,14 +7,16 @@ while [ "$(getprop 'sys.boot_completed')" != '1' ]; do
     sleep 1
 done
 
+NoApath="/data/system/$(ls /data/system/ | grep NoActive)"
+
 # 定义变量
-logtype=$(grep '"logType"' /data/system/NoActive/config/BaseConfig.json | awk -F':' '{print $2}' | sed 's/"//g' | tr -d ' ')
+logtype=$(grep '"logType"' $NoApath/config/BaseConfig.json | awk -F':' '{print $2}' | sed 's/"//g' | tr -d ' ')
 Noactive_version=$(dumpsys package cn.myflv.noactive | grep versionName | awk -F'=' '{print $2}')
 
 # 读取日志类型配置
 if [ "$logtype" = "file" ]; then
     logtype="文件"
-    logpath="/data/system/NoActive/log"
+    logpath="/data/system/$(ls /data/system/ | grep NoActive)/log"
 else
     logtype="框架"
     logpath=$(ls /data/adb/lspd/log/module*)

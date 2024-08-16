@@ -59,7 +59,7 @@ Disable_Millet在Millet_Config_v2的基础上增加了环境判断后写入到�
 修改内容
 
 - 优化模块描述
-- 增加WebUI
+- ~~增加WebUI~~（已删除）
 
 感谢Timeline && Myflvor的墓碑附加模块
 
