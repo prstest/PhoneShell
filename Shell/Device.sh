@@ -4,16 +4,14 @@ if [ "$(whoami)" != "root" ]; then
     exit 1
 fi
 
+new_log_path=$(ls /data/system/ | grep NoActive_)
 
-if [[ -f "/data/system/$(ls /data/system/ | grep NoActive_)/log" && -f "/data/system/NoActive/log" ]]; then
-    NoActive_file="/data/system/$(ls /data/system/ | grep NoActive_)/log"
-    echo 0
+if [[ -f "/data/system/$new_log_path/log" && -f "/data/system/NoActive/log" ]]; then
+    NoActive_file="/data/system/$new_log_path/log"
 elif [ -f "/data/system/NoActive/log" ]; then
     NoActive_file="/data/system/NoActive/log"
-    echo 1
-elif [ -f "/data/system/$(ls /data/system/ | grep NoActive_)/log" ]; then
-    NoActive_file="/data/system/$(ls /data/system/ | grep NoActive_)/log"
-    echo 2
+elif [ -f "/data/system/$new_log_path/log" ]; then
+    NoActive_file="/data/system/$new_log_path/log"
 fi
 
 # 设备信息
@@ -115,7 +113,7 @@ Root() {
 
 # 墓碑
 tombstone() {
-    if [ -f "/data/system/$(ls /data/system/ | grep NoActive)/log" ] && [ "$(getprop persist.sys.powmillet.enable)" != "true" ]; then
+    if [ -f "$NoActive_file" ] && [ "$(getprop persist.sys.powmillet.enable)" != "true" ]; then
         echo "墓碑：Noactive($Filever)"
     elif [ ! -z "$Lspver" ]; then
         echo "墓碑：Noactive($Lspver)"
@@ -157,7 +155,7 @@ $status
 }
 
 # 主函数调用
-# BasicInformation
-# Battery
-# Root
-# tombstone
+BasicInformation
+Battery
+Root
+tombstone
