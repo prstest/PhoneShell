@@ -1,5 +1,3 @@
-#!/system/bin/sh
-
 echo FBO环境检查：
 if [ "$(getprop persist.sys.fboservice.ctrl)" = "true" ]; then
     echo FBO已启动 ✔️
