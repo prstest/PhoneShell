@@ -4,6 +4,18 @@ if [ "$(whoami)" != "root" ]; then
     exit 1
 fi
 
+
+if [[ -f "/data/system/$(ls /data/system/ | grep NoActive_)/log" && -f "/data/system/NoActive/log" ]]; then
+    NoActive_file="/data/system/$(ls /data/system/ | grep NoActive_)/log"
+    echo 0
+elif [ -f "/data/system/NoActive/log" ]; then
+    NoActive_file="/data/system/NoActive/log"
+    echo 1
+elif [ -f "/data/system/$(ls /data/system/ | grep NoActive_)/log" ]; then
+    NoActive_file="/data/system/$(ls /data/system/ | grep NoActive_)/log"
+    echo 2
+fi
+
 # 设备信息
 compile_time=$(uname -v)
 datetime_part=$(echo "$compile_time" | awk '{print $6, $7, $8, $9, $10}')
@@ -18,7 +30,7 @@ JKD=$(echo "100*$charge_full/$charge_full_design" | bc)
 
 # 墓碑
 applist="$(pm list packages -3 2>&1 </dev/null)"
-Filever=$(grep '当前版本' /data/system/NoActive/log | awk '{print $NF}')
+Filever=$(grep '当前版本' $NoActive_file | awk '{print $NF}')
 Lspver=$(grep -l "modules" /data/adb/lspd/log/* | xargs sed -n '/当前版本/s/.*当前版本 \([0-9]*\).*/\1/p')
 SMillet=$(dumpsys package com.sidesand.millet | grep versionName | awk -F' ' '{print $1}' | cut -d '=' -f2)
 
@@ -103,7 +115,7 @@ Root() {
 
 # 墓碑
 tombstone() {
-    if [ -f "/data/system/NoActive/log" ] && [ "$(getprop persist.sys.powmillet.enable)" != "true" ]; then
+    if [ -f "/data/system/$(ls /data/system/ | grep NoActive)/log" ] && [ "$(getprop persist.sys.powmillet.enable)" != "true" ]; then
         echo "墓碑：Noactive($Filever)"
     elif [ ! -z "$Lspver" ]; then
         echo "墓碑：Noactive($Lspver)"
@@ -145,7 +157,7 @@ $status
 }
 
 # 主函数调用
-BasicInformation
-Battery
-Root
-tombstone
+# BasicInformation
+# Battery
+# Root
+# tombstone

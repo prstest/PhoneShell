@@ -46,15 +46,16 @@ echo
 
 echo "FBO触发条件判断:"
 HOUR=$(date +%H)
-if (( HOUR >= 0 && HOUR < 5 )); then
+if (( HOUR > 0 && HOUR < 5 )); then
     echo "当前时间：在凌晨0时到5时范围内 ✔️ "
 else
     echo "当前时间：不在凌晨0时到5时范围内 ❌"
 fi
 
+
 BATTERY_TEMP=$(cat /sys/class/power_supply/battery/temp)
 TEMP_C=$(echo "scale=1; $BATTERY_TEMP / 10" | bc)
-if (( $(echo "$TEMP_C <= 40.0" | bc -l) )); then
+if [ $(echo "$TEMP_C < 40.0" | bc) -eq 1 ]; then
     echo "电池温度：目前温度$TEMP_C℃，未超过40.0℃ ✔️"
 else
     echo "电池温度：目前温度$TEMP_C℃，超过40.0℃，无法触发FBO进程 ❌"
