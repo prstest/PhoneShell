@@ -4,9 +4,8 @@ if [ "$(whoami)" != "root" ]; then
     exit 1
 fi
 
-new_log_path=$(ls /data/system/ | grep NoActive_)
-
 # 判断NoActive目录
+new_log_path=$(ls /data/system/ | grep NoActive_)
 if [[ -f "/data/system/$new_log_path/log" && -f "/data/system/NoActive/log" ]]; then
     NoActive_file="/data/system/$new_log_path/log"
 elif [ -f "/data/system/NoActive/log" ]; then
