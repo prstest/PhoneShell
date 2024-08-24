@@ -7,16 +7,25 @@ while [ "$(getprop 'sys.boot_completed')" != '1' ]; do
     sleep 1
 done
 
-NoApath="/data/system/$(ls /data/system/ | grep NoActive)"
+
+# 判断NoActive目录
+new_log_path=$(ls /data/system/ | grep NoActive_)
+if [[ -f "/data/system/$new_log_path/log" && -f "/data/system/NoActive/log" ]]; then
+    NoActive_file="/data/system/$new_log_path"
+elif [ -f "/data/system/NoActive/log" ]; then
+    NoActive_file="/data/system/NoActive"
+elif [ -f "/data/system/$new_log_path/log" ]; then
+    NoActive_file="/data/system/$new_log_path"
+fi
 
 # 定义变量
-logtype=$(grep '"logType"' $NoApath/config/BaseConfig.json | awk -F':' '{print $2}' | sed 's/"//g' | tr -d ' ')
+logtype=$(grep '"logType"' $NoActive_file/config/BaseConfig.json | awk -F':' '{print $2}' | sed 's/"//g' | tr -d ' ')
 Noactive_version=$(dumpsys package cn.myflv.noactive | grep versionName | awk -F'=' '{print $2}')
 
 # 读取日志类型配置
 if [ "$logtype" = "file" ]; then
     logtype="文件"
-    logpath="/data/system/$(ls /data/system/ | grep NoActive)/log"
+    logpath="$NoActive_file/log"
 else
     logtype="框架"
     logpath=$(ls /data/adb/lspd/log/module*)
