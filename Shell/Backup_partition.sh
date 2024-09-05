@@ -16,7 +16,7 @@ else
 fi
 
 echo "你目前拥有的分区"
-echo $subzone
+ls /dev/block/bootdevice/by-name
 
 echo ""
 

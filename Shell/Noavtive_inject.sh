@@ -1,4 +1,13 @@
-commandInject=$(grep '"commandInject":true' /data/system/NoActive/config/MasterConfig.json)
+# 判断NoActive目录
+new_log_path=$(ls /data/system/ | grep NoActive_)
+if [[ -f "/data/system/$new_log_path/log" && -f "/data/system/NoActive/log" ]]; then
+    NoActive_file="/data/system/$new_log_path"
+elif [ -f "/data/system/NoActive/log" ]; then
+    NoActive_file="/data/system/NoActive"
+elif [ -f "/data/system/$new_log_path/log" ]; then
+    NoActive_file="/data/system/$new_log_path"
+fi
+commandInject=$(grep '"commandInject":true' $NoActive_file/config/MasterConfig.json)
 
 get(){
 # 提示用户输入内容
