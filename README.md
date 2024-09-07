@@ -65,6 +65,8 @@ Disable_Millet在Millet_Config_v2的基础上增加了环境判断后写入到�
 
 感谢后宫学长的NoActive-附加模块-改版
 
-# Backup Partition
+# PartitionTool
 
-使用dd命令备份指定分区，备份的分区统一放在`/sdcard/Download`下
+注意：Backup Partition已更名为PartitionTool
+
+使用dd命令对分区进行操作，可以提取分区和刷入分区
