@@ -129,7 +129,7 @@ Root() {
 
 # 墓碑
 tombstone() {
-    if [ -f "$NoActive_file" ] && [ "$(getprop persist.sys.powmillet.enable)" != "true" ]; then
+    if echo "$applist" | grep -qw "cn.myflv.noactive"; then
         echo "墓碑：Noactive($NoActive_version)"
     elif echo "$applist" | grep -qw "com.sidesand.millet"; then
         echo "墓碑：SMillet($(GetAppVerison "com.sidesand.millet"))"
@@ -162,7 +162,7 @@ tombstone() {
     if [ ${#status} -gt 2 ]; then
         echo "==============[ 冻结状态 ]==============
 $status
-[已冻结 $process1 个应用 $process2 个进程]"
+[已冻结$process1个应用$process2个进程]"
     else
         echo "暂无冻结状态的进程"
     fi
