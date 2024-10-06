@@ -1,17 +1,33 @@
+#!/system/bin/bash
+
 # 检查是否是 root 用户
 if [ "$(whoami)" != "root" ]; then
     echo "请使用Root权限运行此脚本"
     exit 1
 fi
 
+# 存储应用列表
+applist="$(pm list packages -3 2>&1 </dev/null)"
+
 # 判断NoActive目录
-new_log_path=$(ls /data/system/ | grep NoActive_)
-if [[ -f "/data/system/$new_log_path/log" && -f "/data/system/NoActive/log" ]]; then
-    NoActive_file="/data/system/$new_log_path/log"
-elif [ -f "/data/system/NoActive/log" ]; then
-    NoActive_file="/data/system/NoActive/log"
-elif [ -f "/data/system/$new_log_path/log" ]; then
-    NoActive_file="/data/system/$new_log_path/log"
+if echo "$applist" | grep -q "cn.myflv.noactive"; then
+    new_log_path=$(ls /data/system/ | grep NoActive_)
+    if [[ -d "/data/system/$new_log_path" && -d "/data/system/NoActive/log" ]]; then
+        NoActive_Path="/data/system/$new_log_path"
+    elif [ -d "/data/system/NoActive/" ]; then
+        NoActive_Path="/data/system/NoActive/"
+    elif [ -d "/data/system/$new_log_path" ]; then
+        NoActive_Path="/data/system/$new_log_path"
+    fi
+
+    # 读取NoActive日志输出方式
+    NoActive_logoutput=$(grep "logType" "$NoActive_Path/config/BaseConfig.json" | awk -F':' '{print $2}' | sed 's/"//g' | tr -d ' ')
+    if [ "$NoActive_logoutput" = "file" ]; then
+        NoActive_file="$NoActive_Path/log"
+        NoActive_version=$(grep '当前版本' "$NoActive_file" | awk '{print $NF}')
+    else
+        NoActive_version=$(grep -l "modules" /data/adb/lspd/log/* | xargs sed -n '/当前版本/s/.*当前版本 \([0-9]*\).*/\1/p')
+    fi
 fi
 
 # 设备信息
@@ -27,11 +43,7 @@ charge_full=$(cat /sys/class/power_supply/battery/charge_full)
 JKD=$(echo "100*$charge_full/$charge_full_design" | bc)
 
 # 墓碑
-applist="$(pm list packages -3 2>&1 </dev/null)"
-Filever=$(grep '当前版本' $NoActive_file | awk '{print $NF}')
-Lspver=$(grep -l "modules" /data/adb/lspd/log/* | xargs sed -n '/当前版本/s/.*当前版本 \([0-9]*\).*/\1/p')
 SMillet=$(dumpsys package com.sidesand.millet | grep versionName | awk -F' ' '{print $1}' | cut -d '=' -f2)
-
 
 # 冻结
 status=$(ps -A | grep -E "refrigerator|do_freezer|signal" | awk '{print "😴"$6 " " $9}')
@@ -44,6 +56,10 @@ status=${status//"do_signal_stop"/" GSTOP冻结中:"}
 status=${status//"get_signal"/" FreezerV2冻结中:"}
 v1Info=$(mount | grep freezer | awk '{print "✔️已挂载 FreezerV1:", $3}')
 
+# 获取应用版本号
+GetAppVerison(){
+    dumpsys package $1 | grep versionCode | awk -F' ' '{print $1}' | cut -d '=' -f2
+}
 # 基本信息
 BasicInformation() {
     echo "安卓版本：$(getprop ro.build.version.release)"
@@ -51,6 +67,7 @@ BasicInformation() {
     echo "安全补丁：$(getprop ro.build.version.security_patch)"
     echo "固件版本：$(getprop persist.sys.grant_version)"
     echo "内核版本：$(uname -r)"
+    
     case $(echo "$compile_time" | awk '{print $5}') in
         "Jan") chinese_month="1月" ;;
         "Feb") chinese_month="2月" ;;
@@ -66,6 +83,7 @@ BasicInformation() {
         "Dec") chinese_month="12月" ;;
         *) chinese_month="未知" ;;
     esac
+
     case $(echo "$compile_time" | awk '{print $4}') in
         "Mon") chinese_day="星期一" ;;
         "Tue") chinese_day="星期二" ;;
@@ -76,6 +94,7 @@ BasicInformation() {
         "Sun") chinese_day="星期日" ;;
         *) chinese_day="未知" ;;
     esac
+
     echo "编译时间：$(echo "$compile_time" | awk '{print $9}')年$chinese_month$(echo "$compile_time" | awk '{print $6}')日 $chinese_day $time_part"
     echo "处理器：$(getprop ro.soc.model)"
     echo "ZRAM大小："$(awk 'NR > 1 {size=$3/(1024*1024); printf "%.1fG\n", size}' /proc/swaps) "($Zram)"
@@ -94,15 +113,15 @@ Battery() {
 # Root环境
 Root() {
     if env | grep -qn 'ksu'; then
-        echo "Root环境：KernelSU"
-    elif echo "$applist" | grep -qw "me.bmax.apatch"; then
-        echo "Root环境：APatch"    
+        echo "Root环境：KernelSU($(GetAppVerison "me.weishu.kernelsu"))"
+    elif [ -f "/data/adb/ap/modules.img" ]; then
+        echo "Root环境：APatch($(GetAppVerison "me.bmax.apatch"))"
     elif echo "$applist" | grep -qw "com.topjohnwu.magisk"; then
-        echo "Root环境：Magisk"
+        echo "Root环境：Magisk($(GetAppVerison "com.topjohnwu.magisk"))"
     elif echo "$applist" | grep -qw "io.github.huskydg.magisk"; then
-        echo "Root环境：Magisk🦊"
+        echo "Root环境：Magisk🦊($(GetAppVerison "io.github.huskydg.magisk"))"
     elif echo "$applist" | grep -qw "io.github.vvb2060.magisk"; then
-        echo "Root环境：Magisk(Alpha)"
+        echo "Root环境：Magisk Alpha($(GetAppVerison "io.github.vvb2060.magisk"))"
     else
         echo "Root环境：未知"
     fi
@@ -114,9 +133,7 @@ Root() {
 # 墓碑
 tombstone() {
     if [ -f "$NoActive_file" ] && [ "$(getprop persist.sys.powmillet.enable)" != "true" ]; then
-        echo "墓碑：Noactive($Filever)"
-    elif [ ! -z "$Lspver" ]; then
-        echo "墓碑：Noactive($Lspver)"
+        echo "墓碑：Noactive($NoActive_version)"
     elif echo "$applist" | grep -qw "com.sidesand.millet"; then
         echo "墓碑：SMillet($SMillet)"
     elif [ "$(getprop persist.sys.powmillet.enable)" = "true" ]; then
@@ -148,7 +165,7 @@ tombstone() {
     if [ ${#status} -gt 2 ]; then
         echo "==============[ 冻结状态 ]==============
 $status
-"[  已冻结"$process1"个应用"$process2"个进程  "]"
+[已冻结 $process1 个应用 $process2 个进程]"
     else
         echo "暂无冻结状态的进程"
     fi
