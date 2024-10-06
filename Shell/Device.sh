@@ -9,6 +9,20 @@ fi
 # 存储应用列表
 applist="$(pm list packages -3 2>&1 </dev/null)"
 
+# 设备信息
+compile_time=$(uname -v)
+datetime_part=$(echo "$compile_time" | awk '{print $6, $7, $8, $9, $10}')
+time_part=$(echo "$compile_time" | awk '{print $7}')
+Zram=$(cat /sys/block/zram0/comp_algorithm | cut -d '[' -f2 | cut -d ']' -f1)
+
+# 电池
+charge_full_design=$(cat /sys/class/power_supply/battery/charge_full_design)
+cycle_count=$(cat /sys/class/power_supply/battery/cycle_count)
+charge_full=$(cat /sys/class/power_supply/battery/charge_full)
+JKD=$(echo "100*$charge_full/$charge_full_design" | bc)
+
+# 墓碑
+
 # 判断NoActive目录
 if echo "$applist" | grep -q "cn.myflv.noactive"; then
     new_log_path=$(ls /data/system/ | grep NoActive_)
@@ -29,21 +43,6 @@ if echo "$applist" | grep -q "cn.myflv.noactive"; then
         NoActive_version=$(grep -l "modules" /data/adb/lspd/log/* | xargs sed -n '/当前版本/s/.*当前版本 \([0-9]*\).*/\1/p')
     fi
 fi
-
-# 设备信息
-compile_time=$(uname -v)
-datetime_part=$(echo "$compile_time" | awk '{print $6, $7, $8, $9, $10}')
-time_part=$(echo "$compile_time" | awk '{print $7}')
-Zram=$(cat /sys/block/zram0/comp_algorithm | cut -d '[' -f2 | cut -d ']' -f1)
-
-# 电池
-charge_full_design=$(cat /sys/class/power_supply/battery/charge_full_design)
-cycle_count=$(cat /sys/class/power_supply/battery/cycle_count)
-charge_full=$(cat /sys/class/power_supply/battery/charge_full)
-JKD=$(echo "100*$charge_full/$charge_full_design" | bc)
-
-# 墓碑
-SMillet=$(dumpsys package com.sidesand.millet | grep versionName | awk -F' ' '{print $1}' | cut -d '=' -f2)
 
 # 冻结
 status=$(ps -A | grep -E "refrigerator|do_freezer|signal" | awk '{print "😴"$6 " " $9}')
@@ -135,7 +134,7 @@ tombstone() {
     if [ -f "$NoActive_file" ] && [ "$(getprop persist.sys.powmillet.enable)" != "true" ]; then
         echo "墓碑：Noactive($NoActive_version)"
     elif echo "$applist" | grep -qw "com.sidesand.millet"; then
-        echo "墓碑：SMillet($SMillet)"
+        echo "墓碑：SMillet($(GetAppVerison "com.sidesand.millet"))"
     elif [ "$(getprop persist.sys.powmillet.enable)" = "true" ]; then
         echo "墓碑：Millet"
     else
