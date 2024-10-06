@@ -21,8 +21,6 @@ cycle_count=$(cat /sys/class/power_supply/battery/cycle_count)
 charge_full=$(cat /sys/class/power_supply/battery/charge_full)
 JKD=$(echo "100*$charge_full/$charge_full_design" | bc)
 
-# 墓碑
-
 # 判断NoActive目录
 if echo "$applist" | grep -q "cn.myflv.noactive"; then
     new_log_path=$(ls /data/system/ | grep NoActive_)
