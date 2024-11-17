@@ -8,7 +8,7 @@ if [[ "$MAGISK_VER_CODE" -eq 27005 && -z "$KSU" && -z "$APATCH" ]]; then
 fi
 
 # 检测 Magisk 版本是否小于 27000
-if [ "$MAGISK_VER_CODE" -lt 27000 ]; then
+if [[ "$MAGISK_VER_CODE" -lt 27000 && -z "$KSU" && -z "$APATCH" ]]; then
     ui_print "你的 Magisk 版本 < 27000 已被拦截"
     abort "Stop installation Module"
 fi
