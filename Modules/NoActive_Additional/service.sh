@@ -1,12 +1,8 @@
-#!/system/bin/sh
-
+#!/system/bin/bash
 MODDIR="${0%/*}"
 
-# 等待系统启动完成
-while [ "$(getprop 'sys.boot_completed')" != '1' ]; do
-    sleep 1
-done
-
+# 新的判断系统启动完成方法
+resetprop -w sys.boot_completed 0
 
 # 判断NoActive目录
 new_log_path=$(ls /data/system/ | grep NoActive_)

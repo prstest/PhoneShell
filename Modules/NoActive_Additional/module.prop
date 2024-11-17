@@ -1,6 +1,6 @@
-id=Noactive_additional
+id=NoActive_Additional
 name=NoActive Additional
-version=3.9-Pro(166)
-versionCode=1
-author=PrsTest
+version=undefine
+versionCode=18
+author=myflavor,PrsTest
 description=加载失败，请重启
