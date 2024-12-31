@@ -138,7 +138,16 @@ Root() {
         echo "Root：未知"
     fi
 
-    find /data/adb/modules/ -name 'module.prop' -exec awk -F= '/^name=/ {name=$2} /^version=/ {print " "++i"."" "name, $2}' {} +
+    i=1
+    for module_dir in /data/adb/modules/*; do
+        if [ -f "$module_dir/disable" ]; then
+            continue
+        elif [ -f "$module_dir/module.prop" ]; then
+            awk -F= -v i="$i" '/^name=/ {name=$2} /^version=/ { print i ". " name, $2; i++;}' "$module_dir/module.prop"
+            i=$((i + 1))
+        fi
+    done
+
     echo " "
 }
 
@@ -148,10 +157,9 @@ tombstone() {
         echo "墓碑：NoActive($NoActive_Version)"
         ReKernel="$(ls /proc/rekernel 2>/dev/null | head -n 1)"
         if [ -n "$ReKernel" ]; then
-            echo "🌐 Re:Kernel端口: $ReKernel"
+            echo "Re:Kernel端口: $ReKernel"
         fi
-            echo "📄 NoActive日志输出：$NoActive_logoutput"
-            echo "========================="
+        echo "NoActive日志输出：$NoActive_logoutput"
     elif echo "$applist" | grep -qw "com.sidesand.millet"; then
         echo "墓碑：SMillet($(GetAppVerison "com.sidesand.millet"))"
     elif [ "$(getprop persist.sys.powmillet.enable)" = "true" ]; then
@@ -159,11 +167,7 @@ tombstone() {
     else
         echo "未知的墓碑"
     fi
-    
 
-    if [ -e /dev/cg2_bpf ]; then
-        echo "✔️ 已挂载 FreezerV2 (dev/cg2_bpf)"
-    fi
 
     if [ -e /sys/fs/cgroup/uid_0/cgroup.freeze ]; then
         echo "✔️ 已挂载 FreezerV2(UID)"
