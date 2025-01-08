@@ -10,7 +10,6 @@
 #define LOG_FILE "/data/adb/modules/scm/config/log.txt"
 #define SWITCH "/sys/class/power_supply/battery/input_suspend"
 
-// 保存配置文件的最后修改时间的变量
 time_t last_mod_time = 0;
 
 void log_and_print(const char *message) {
@@ -66,14 +65,7 @@ void update_count_file(const char *count_file, const char *key, int increment) {
     }
 
     char line[256];
-    char temp_file[] = "/data/adb/modules/scm/config/temp_count.env";
-    FILE *temp = fopen(temp_file, "w");
-    if (temp == NULL) {
-        perror("无法创建临时计数文件");
-        fclose(file);
-        return;
-    }
-
+    long pos = 0;
     int found = 0;
     while (fgets(line, sizeof(line), file)) {
         char key_in_file[256];
@@ -81,21 +73,21 @@ void update_count_file(const char *count_file, const char *key, int increment) {
         if (sscanf(line, "%[^=]=%s", key_in_file, value_str) == 2) {
             if (strcmp(key_in_file, key) == 0) {
                 int current_value = atoi(value_str);
-                fprintf(temp, "%s=%d\n", key, current_value + increment);
+                fseek(file, pos, SEEK_SET);
+                fprintf(file, "%s=%d\n", key, current_value + increment);
                 found = 1;
-            } else {
-                fprintf(temp, "%s", line);
+                break;
             }
         }
+        pos = ftell(file);
     }
 
     if (!found) {
-        fprintf(temp, "%s=%d\n", key, increment); // 初始值为 increment
+        fseek(file, 0, SEEK_END);
+        fprintf(file, "%s=%d\n", key, increment);
     }
 
     fclose(file);
-    fclose(temp);
-    rename(temp_file, count_file);
 }
 
 void read_count_file(const char *count_file, const char *key, int *value) {
@@ -127,11 +119,9 @@ void check_and_reload_config(const char *config_file, int *start, int *stop, int
     struct stat file_stat;
     if (stat(config_file, &file_stat) == 0) {
         if (file_stat.st_mtime != last_mod_time) {
-            // 文件被修改了，重新加载配置
             last_mod_time = file_stat.st_mtime;
             read_config(config_file, start, stop, stop_current, Trickle, main_switch, stoptime, debug);
 
-            // 日志记录配置更新
             time_t now;
             struct tm *tm_info;
             char log_msg[512];
@@ -156,7 +146,7 @@ void check_and_reload_config(const char *config_file, int *start, int *stop, int
 int main() {
     int start = 0, stop = 0, stop_current = 0, Trickle = 0, main_switch = 0, stoptime = 10, debug = 0;
     int current = 0, level = 0;
-    int was_stopped = 0; // 记录停止充电状态
+    int was_stopped = 0;
 
     clear_log_file(); // 清空日志文件
 
@@ -192,7 +182,6 @@ int main() {
     log_and_print(log_msg);
 
     while (1) {
-        // 定期检查并重新加载配置
         check_and_reload_config(CONFIG_FILE, &start, &stop, &stop_current, &Trickle, &main_switch, &stoptime, &debug);
 
         if (main_switch != 1) {
@@ -239,8 +228,8 @@ int main() {
             fprintf(switch_file, "0");
             snprintf(log_msg, sizeof(log_msg), "%s [信息] 电量: %d | 电流: %d | 已恢复充电", timestamp, level, current);
             log_and_print(log_msg);
-            update_count_file(COUNT_FILE, "start_count", 1); // 增加 start_count
-            was_stopped = 0; // 确保停止状态被清除
+            update_count_file(COUNT_FILE, "start_count", 1);
+            was_stopped = 0;
         }
 
         // 停止充电逻辑
@@ -249,16 +238,16 @@ int main() {
                 fprintf(switch_file, "1");
                 snprintf(log_msg, sizeof(log_msg), "%s [信息] 电量: %d | 电流: %d | 已停止充电", timestamp, level, current);
                 log_and_print(log_msg);
-                update_count_file(COUNT_FILE, "stop_count", 1); // 增加 stop_count
-                was_stopped = 1; // 记录停止状态
+                update_count_file(COUNT_FILE, "stop_count", 1); 
+                was_stopped = 1;
             }
         } else {
             if (level == stop && !was_stopped) {
                 fprintf(switch_file, "1");
                 snprintf(log_msg, sizeof(log_msg), "%s [信息] 电量: %d | 电流: %d | 已停止充电", timestamp, level, current);
                 log_and_print(log_msg);
-                update_count_file(COUNT_FILE, "stop_count", 1); // 增加 stop_count
-                was_stopped = 1; // 记录停止状态
+                update_count_file(COUNT_FILE, "stop_count", 1);
+                was_stopped = 1; 
             }
         }
 
@@ -278,5 +267,3 @@ int main() {
 
     return 0;
 }
-
-
