@@ -1,6 +1,6 @@
 id=scm
 name=SCM
-version=v1.0
+version=v1.2
 versionCode=1
-author=Prs_test
+author=Prslc
 description=Stop charging when the specified battery level is reached
