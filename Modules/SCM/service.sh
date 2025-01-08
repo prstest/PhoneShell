@@ -2,7 +2,7 @@
 
 MODDIR=${0%/*}
 
-while [ "$(getprop 'sys.boot_completed')" != '1' ]; do sleep 1; done
+resetprop -w sys.boot_completed 0
 
 chmod +x $MODDIR/SCM
 
